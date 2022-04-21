@@ -11,7 +11,7 @@ PENDIENTE DE HACER: Escribir sobre de qué manera el ámbito del ensamblador inl
 Ensamblador inline
 ==================
 
-Para tener un control más fino, especialmente para mejorar el lenguaje escribiendo librerías, es posible intercalar las declaraciones hechas en Solidity con el ensamblador inline en un lenguaje cercano al lenguaje de la máquina virtual. Debido a que el EVM (la máquina virtual de Ethereum) es un máquina de tipo pila (stack machine), suele ser difícil dirigirse a la posición correcta de la pila y proporcinar los argumentos a los opcodes en el punto correcto en la pila. El ensamblador inline de Solidity intenta facilitar esto, y otras complicaciones que ocurren cuando se escribe el ensamblador de forma manual, con las siguientes funcinalidades:
+Para tener un control más fino, especialmente para mejorar el lenguaje escribiendo librerías, es posible intercalar las declaraciones hechas en Solidity con el ensamblador inline en un lenguaje cercano al lenguaje de la máquina virtual. Debido a que el EVM (la máquina virtual de Ethereum) es una máquina de tipo pila (stack machine), suele ser difícil dirigirse a la posición correcta de la pila y proporcinar los argumentos a los opcodes en el punto correcto de la pila. El ensamblador inline de Solidity intenta facilitar esto, y otras complicaciones que ocurren cuando se escribe el ensamblador de forma manual, con las siguientes funcionalidades:
 
 * opcodes de estilo funcional: ``mul(1, add(2, 3))`` en lugar de ``push1 3 push1 2 add push1 1 mul``
 * variables de ensamblador local: ``let x := add(2, 3)  let y := mload(0x40)  x := add(x, y)``
@@ -59,7 +59,7 @@ El siguiente ejemplo proporciona el código de librería que permite acceder al 
         }
     }
 
-El ensamblador inline también es útil es los casos en los que el optimizador falla en producir un código eficiente. Tenga en cuenta que es mucho más difíciil escribir el ensamblador porque el compilador no realiza controles, por lo tanto use ensamblador solamente para cosas complejas y solo si sabe lo que está haciendo.
+El ensamblador inline también es útil en los casos en los que el optimizador falla en producir un código eficiente. Tenga en cuenta que es mucho más difíciil escribir el ensamblador porque el compilador no realiza controles, por lo tanto use ensamblador solamente para cosas complejas y solo si sabe lo que está haciendo.
 
 .. code::
 
@@ -110,19 +110,19 @@ El ensamblador inline también es útil es los casos en los que el optimizador f
 
 
 
-Síntaxis
+Sintaxis
 --------
 
 El ensamblador analiza comentarios, literales e identificadores de igual manera que en Solidity, así que se puede usar los comentarios habituales: ``//`` y ``/* */``. El ensamblador inline está señalado por ``assembly { ... }`` y dentro de estos corchetes se pueden usar los siguentes elementos (véase las secciones más abajo para más detalles):
 
  - literales, es decir ``0x123``, ``42`` o ``"abc"`` (strings de hasta 32 carácteres)
  - opcodes (en "estilo instruccional"), p.ej. ``mload sload dup1 sstore``, véase más abajo para tener una lista
- - opcodes en estilo fucional, e.g. ``add(1, mlod(0))``
+ - opcodes en estilo funcional, e.g. ``add(1, mlod(0))``
  - etiquetas, p.ej. ``name:``
  - declaraciones de variable, p.ej. ``let x := 7``, ``let x := add(y, 3)`` o ``let x`` (se asigna el valor inicial de vacío (0))
  - identificadores (etiquetas o variables de ensamblador local y externos si se usa como ensamblador inline), p.ej. ``jump(name)``, ``3 x add``
  - tareas (en "estilo instruccional"), e.g. ``3 =: x``
- - tareas en estilo fucional, p.ej. ``x := add(y, 3)``
+ - tareas en estilo funcional, p.ej. ``x := add(y, 3)``
  - bloques donde las variables locales están incluidas dentro, p.ej. ``{ let x := 3 { let y := add(x, 1) } }``
 
 Opcodes
@@ -132,9 +132,9 @@ Este documento no pretende ser una descripción exhaustiva de la máquina virtua
 
 Si un opcode recibe un argumento (siempre desde lo más alto de la pila), se ponen entre paréntesis.
 Note que el orden de los argumentos puede verse invertido en estilo no funcional (se explica más abajo).
-Opcodes marcados con un ``-`` no empuja un elemento encima de la pila, los marcados con ``*`` son especiales, y todos los demás empujan exactamente un elemento encima de la pila.
+Opcodes marcados con un ``-`` no empujan a un elemento encima de la pila, los marcados con ``*`` son especiales, y todos los demás empujan exactamente un elemento encima de la pila.
 
-En el ejemplo ``mem[a...b)``, se indica los bytes de memoria empezando en la posición ``a`` hasta la posición (excluida) ``b`` y en el ejemplo ``storage[p]``, se indica los índices de almacenamiento en la posicón ``p``.
+En el ejemplo ``mem[a...b)``, se indican los bytes de memoria empezando en la posición ``a`` hasta la posición (excluida) ``b`` y en el ejemplo ``storage[p]``, se indica los índices de almacenamiento en la posicón ``p``.
 
 Los opcodes ``pushi`` y ``jumpdest`` no se pueden usar directamente.
 
@@ -265,7 +265,7 @@ En la gramática, los opcodes se representan como identificadores predefinidos.
 |                         |      | de salida mem[out..(out+outsize)) devolviendo 0 si hay un error |
 |                         |      | (por ejemplo si se queda sin gas) y 1 si es un éxito            |
 +-------------------------+------+-----------------------------------------------------------------+
-| callcode(g, a, v, in,   |      | indéntico a `call` pero usando solo el código de a y si no,     |
+| callcode(g, a, v, in,   |      | idéntico a `call` pero usando solo el código de a y si no,      |
 | insize, out, outsize)   |      | quedarse en el contexto del contrato actual                     |
 +-------------------------+------+-----------------------------------------------------------------+
 | delegatecall(g, a, in,  |      | indéntico a `callcode` pero mantener también ``caller``         |
@@ -331,13 +331,13 @@ Se puede entrar opcodes uno trás el otro de la misma manera que van aparecer en
 
     3 0x80 mload add 0x80 mstore
 
-Como suele ser complicado ver cuales son los argumentos actuales para algunos de los opcodes, el ensamblador inline de Solidity proporciona también una notación de "estilo fucinonal" donde el mismo código se escribiría de la siguiente manera:
+Como suele ser complicado ver cuales son los argumentos actuales para algunos de los opcodes, el ensamblador inline de Solidity proporciona también una notación de "estilo funcional" donde el mismo código se escribiría de la siguiente manera:
 
 .. code::
 
     mstore(0x80, add(mload(0x80), 3))
 
-Expresiones en estilo funcional no pueden hacer uso internamente del estilo instruccional, es decir que ``1 2 mstore(0x80, add)`` no es ensamblador válido, debería escribirse como ``mstore(0x80, add(2, 1))``. Para los opcodes que no toman argumentos, las parentésis pueden obviarse.
+Expresiones en estilo funcional no pueden hacer uso internamente del estilo instruccional, es decir que ``1 2 mstore(0x80, add)`` no es ensamblador válido, debería escribirse como ``mstore(0x80, add(2, 1))``. Para los opcodes que no toman argumentos, los paréntesis pueden obviarse.
 
 Nótese que el orden de los argumentos está invertido en estilo funcional con respecto al estilo instruccional. Si hace uso del estilo funcional, el primer argumento aparecerá arriba de la pila.
 
@@ -345,7 +345,7 @@ Nótese que el orden de los argumentos está invertido en estilo funcional con r
 Acceso a variables y funciones internas
 ---------------------------------------
 
-Se accede a las variables y otros identificadores de Solidity simplemente por su nombre. Para las variables de memoria, esto tiene como consecuencia que es la dirección y no el nombre que se empuja en la pila. Con las variables de almacenamiento es diferente: los valores en almacenamiento podrían no ocupar una posición completa en la pila, de tal manera que su dirección estaría compuesta por una posición y un decalage en bytes dentro de esta posición. Para recuperar la posición a la que apunta la variable ``x``, se usa ``x_slot`` y para recuperar el decalage en bytes se usa ``x_offset``.
+Se accede a las variables y otros identificadores de Solidity simplemente por su nombre. Para las variables de memoria, esto tiene como consecuencia que es la dirección y no el nombre que se empuja en la pila. Con las variables de almacenamiento es diferente: los valores en almacenamiento podrían no ocupar una posición completa en la pila, de tal manera que su dirección estaría compuesta por una posición y un desplazamiento en bytes dentro de esta posición. Para recuperar la posición a la que apunta la variable ``x``, se usa ``x_slot`` y para recuperar el desplazamiento en bytes se usa ``x_offset``.
 
 En las asignaciones (ver abajo), hasta se pueden usar las variables locales de Solidity y asignarlas.
 
@@ -354,7 +354,7 @@ También se puede acceder a las funciones externas al ensamblador inline: el ens
  - el que llama empuja return etiqueta, arg1, arg2, ..., argn
  - la llamada devuelve ret1, ret2, ..., retm
 
-Esta funcionalidad está todavía un poco dificultosa de usar, esensialmente porque el decalage de pila cambia durante la llamada, y por lo tanto las referencias a las variables locales estarán mal.
+Esta funcionalidad está todavía un poco dificultosa de usar, esencialmente porque el desplazamiento de pila cambia durante la llamada, y por lo tanto las referencias a las variables locales estarán mal.
 
 .. code::
 
@@ -364,7 +364,7 @@ Esta funcionalidad está todavía un poco dificultosa de usar, esensialmente por
         uint b;
         function f(uint x) public returns (uint r) {
             assembly {
-                r := mul(x, sload(b_slot)) // ignorar el decalage, sabemos que es cero
+                r := mul(x, sload(b_slot)) // ignorar el desplazamiento, sabemos que es cero
             }
         }
     }
@@ -372,7 +372,7 @@ Esta funcionalidad está todavía un poco dificultosa de usar, esensialmente por
 Etiquetas
 ---------
 
-Otro de los problemas en el ensamblador del EVM es que ``jump`` y ``jumpi`` hacen uso de direcciones absolutas que pueden facilmente cambiar. El ensamblador inline de Solidity proporciona etiquetas para hacer el uso de saltos más cómodo. Nótese que las etiquetas son una funcionalidad de bajo nivel y que es perfectamente posible escribir un ensamblador eficicente sin etiquetas, usando solo funciones de ensamblador, bucles e instrucciones de intercambio (ver abajo). El siguiente código computa un elemento en una serie de Fibonacci.
+Otro de los problemas en el ensamblador del EVM es que ``jump`` y ``jumpi`` hacen uso de direcciones absolutas que pueden facilmente cambiar. El ensamblador inline de Solidity proporciona etiquetas para hacer el uso de saltos más cómodos. Nótese que las etiquetas son una funcionalidad de bajo nivel y que es perfectamente posible escribir un ensamblador eficicente sin etiquetas, usando solo funciones de ensamblador, bucles e instrucciones de intercambio (ver abajo). El siguiente código computa un elemento en una serie de Fibonacci.
 
 .. code::
 
@@ -439,7 +439,7 @@ Asignaciones
 
 Las asignaciones son posibles para las variables de ensamblador local y para las variables de función local. Tenga cuidado que cuando usted asigna a variables que apuntan a la memoria o al almacenamiento, usted sólo cambiará lo que apunta pero no los datos.
 
-Existen asignaciones de dos tipos: las de estilo funcional y las de estilo instruccional. Para las asignaciones de estilo funcional, (``variable := value``), se requiere proporcionarun valor dentro de una expresión de estilo funcional que resulta en exactamente un valor de pila. Para las asignaciones de estilo instruccional (``=: variable``), el valor simplemente se toma desde arriba de la pila. Para ambas maneras, la coma apunta al nombre de la variable. La asignación se ejecuta remplazando el valor de la variable en la pila por el valor nuevo.
+Existen asignaciones de dos tipos: las de estilo funcional y las de estilo instruccional. Para las asignaciones de estilo funcional, (``variable := value``), se requiere proporcionar un valor dentro de una expresión de estilo funcional que resulta en exactamente un valor de pila. Para las asignaciones de estilo instruccional (``=: variable``), el valor simplemente se toma desde arriba de la pila. Para ambas maneras, la coma apunta al nombre de la variable. La asignación se ejecuta reemplazando el valor de la variable en la pila por el valor nuevo.
 
 .. code::
 
@@ -556,16 +556,16 @@ A cambio del ensamblador EVM, Solidity conoce tipos que son más estrechos que 2
 
 Solidity maneja la memoria de una manera muy simple: hay un "cursor de memoria disponible" en la posición ``0x40`` de la memoria. Si se desea asignar memoria, tan solo se tiene que usar la memoria a partir de este punto y actualizar el cursor en consecuencia.
 
-En Solidity, los elementos en arrays de memoria siempre ocupan múltiples de 32 bytes (y si, esto también es cierto para ``byte[]``, pero no para ``bytes`` y ``string``). Arrays multidimensionales son cursores de arrays de memoria. La longitud de un array dinámico se almacena en la primera posición del array y luego sólo le siguen elementos del array.
+En Solidity, los elementos en arrays de memoria siempre ocupan múltiplos de 32 bytes (y si, esto también es cierto para ``byte[]``, pero no para ``bytes`` y ``string``). Arrays multidimensionales son cursores de arrays de memoria. La longitud de un array dinámico se almacena en la primera posición del array y luego sólo le siguen elementos del array.
 
 .. warning::
-    Arrays de memoria estáticos en tamaño no tienen un campo para la longitud, pero se añadirá pronto para permitir una mejor convertibilidad entre arrays de tamaño estático y dinñamico, pero es importante no contar con esto por ahora.
+    Arrays de memoria estáticos en tamaño no tienen un campo para la longitud, pero se añadirá pronto para permitir una mejor convertibilidad entre arrays de tamaño estático y dinámico, pero es importante no contar con esto por ahora.
 
 
 Ensamblador independiente
 =========================
 
-El lenguage ensamblador que hemos descrito más arriba como ensamblador inline también puede usarse de forma independiente. De hecho, el plan es de usarlo como un lenguage intermedio para el compilador de Solidity. De esta forma, intenta cumplir con varios objetivos:
+El lenguage ensamblador que hemos descrito más arriba como ensamblador inline también puede usarse de forma independiente. De hecho, el plan es usarlo como un lenguage intermedio para el compilador de Solidity. De esta forma, intenta cumplir con varios objetivos:
 
 1. Los programas escritos en el lenguage ensamblador deben de ser legibles, aunque el código sea generado por un compilador de Solidity.
 2. La traducción del lenguage ensamblador al bytecode deben de contener el número de sorpresas el más reducido posible.
@@ -577,7 +577,7 @@ El segundo objetivo se cumple introduciendo una fase de desazucarización que s�
 
 Alcance: Un identificador que está declarado (etiqueta, variable, función, ensamblador) sólo es visible en el bloque donde ha sido declarado (incluyendo bloques anidados dentro del bloque actual). No es legal acceder variables locales cruzando los límites de la función, aunque estas variables estuvieran dentro del alcance. Ocultar no está permitido. No se puede acceder variables locales antes de que estén declaradas, pero está permitido acceder etiquetas, funciones y ensambladores sin que lo estén. Ensambladores son bloques especiales que se usan para, por ejemplo, devolver el tiempo de ejecución del código o crear contratos. Identificadores externos a un ensamblador no son visibles en un sub ensamblador.
 
-Si el flujo de control va más allá del final de un bloque, se insertan instrucciones pop que corresponden al número de variables locales declaradas en este bloque. Cuando se referencia una variables local, el generador de código necesita saber su posición relativa actual en la pila y por lo tanto necesita hacer un seguimiento de la así llamada altura actual de la pila. Como se quitan todas las variables locales al final de un bloque, la altura de la pila antes y después de un bloque debería ser la misma. Si esto no fuera el caso, se emite un aviso.
+Si el flujo de control va más allá del final de un bloque, se insertan instrucciones pop que corresponden al número de variables locales declaradas en este bloque. Cuando se referencia una variable local, el generador de código necesita saber su posición relativa actual en la pila y por lo tanto necesita hacer un seguimiento de la así llamada altura actual de la pila. Como se quitan todas las variables locales al final de un bloque, la altura de la pila antes y después de un bloque debería ser la misma. Si esto no fuera el caso, se emite un aviso.
 
 ¿Por qué usamos constructs de alto nivel como ``switch``, ``for`` y funciones:
 
@@ -709,7 +709,7 @@ El ensamblador sucede en cuatro etapas:
 3. Generación de la transmisión de opcodes
 4. Generación del bytecode
 
-Vamos a especificar las etapas uno a tres de una forma pseudo formal. Especificaciones más formales se darán luego.
+Vamos a especificar las etapas uno a tres de una forma pseudo formal. Las especificaciones más formales se darán luego.
 
 
 Análisis sintático / Gramática
@@ -772,7 +772,7 @@ Gramática::
 Desazucarización
 ----------------
 
-Una transformación AST quita los for, switch y funciones constructs. El resultados aún es pasible de ser analizado desde el punto de vista sintáctico por el mismo analizador, pero no usará algunos de los constructs. Si se añaden saltos a los que sólo se salta y desde los que luego no se continúa, se añade información sobre el contenido de la pila, a no ser que no se acceda a ninguna variable local de alcance externo o que la altura de la pila sea la misma que para la instrucción anterior.
+Una transformación AST quita los for, switch y funciones constructs. El resultado aún es posible de ser analizado desde el punto de vista sintáctico por el mismo analizador, pero no usará algunos de los constructs. Si se añaden saltos a los que sólo se salta y desde los que luego no se continúa, se añade información sobre el contenido de la pila, a no ser que no se acceda a ninguna variable local de alcance externo o que la altura de la pila sea la misma que para la instrucción anterior.
 
 Pseudo código::
 
@@ -857,7 +857,7 @@ Pseudo código::
 Generación de la transmisión de opcodes
 ---------------------------------------
 
-Durante la generación de la transmisión de opcodes, hacemos un seguimiento de la altura de la pila en un contador, de tal manera que se pueda acceder a la variables de la pila por su nombre. Se modifica la altura de la pila con cada opcode que modifica la pila y con cada etiqueta que se anota con un ajuste de la pila. Cada vez que se introduce una nueva variable local, se registra junto con la altua actual de la pila. Si se accede a una variable (bien para copiar su valor, bien para asignar algo), se selecciona la instrucción ``DUP`` o ``SWAP``, dependiendo de la diferencia entre la altura actual de la pila y la altura de la pila en el momento en que se introdujo esta variable.
+Durante la generación de la transmisión de opcodes, hacemos un seguimiento de la altura de la pila en un contador, de tal manera que se pueda acceder a las variables de la pila por su nombre. Se modifica la altura de la pila con cada opcode que modifica la pila y con cada etiqueta que se anota con un ajuste de la pila. Cada vez que se introduce una nueva variable local, se registra junto con la altura actual de la pila. Si se accede a una variable (bien para copiar su valor, bien para asignar algo), se selecciona la instrucción ``DUP`` o ``SWAP``, dependiendo de la diferencia entre la altura actual de la pila y la altura de la pila en el momento en que se introdujo esta variable.
 
 Pseudo código::
 
